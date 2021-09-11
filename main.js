@@ -8,61 +8,41 @@ let browserStartPromise = puppeteer.launch({
     slowMo: 75,
     args: ['--start-maximized', '--disable-notifications']
 });
+
 let page, browser;
-browserStartPromise
-    .then(function (browserObj) {
-        console.log('Browser Opened');
-        browser = browserObj;
-        let browserTabOpenPromise = browserObj.newPage();
-        return browserTabOpenPromise;
-    })
-    .then(function (newTab) {
-        page = newTab;
-        console.log('New tab opened');
-        let googleHomepagePromise = newTab.goto('https://www.hackerrank.com/auth/login');
-        return googleHomepagePromise
-    })
-    .then(function () {
-        console.log('Hackerrank login Page');
-        let waitUsernameSelectorPromise = page.waitForSelector('#input-1', { visible: true });
-        return waitUsernameSelectorPromise;
-    })
-    .then(function () {
-        console.log('Selector loaded');
-        let usernameFillPromise = page.type('#input-1', emailPassObj.email, { delay: 100 });
-        return usernameFillPromise;
-    })
-    .then(function () {
-        console.log('Username filled');
-        let passwordFillPromise = page.type('#input-2', emailPassObj.password, { delay: 50 });
-        return passwordFillPromise;
-    })
-    .then(function () {
-        console.log('Password filled');
-        let clickLoginPromise = page.click('button.ui-btn.ui-btn-large.ui-btn-primary.auth-button.ui-btn-styled');
-        return clickLoginPromise;
-    })
-    .then(function () {
-        console.log('Logged inside hackerrank');
-        let algoClickPromise = waitAndClick(page, '.track-item.bold>div');
-        return algoClickPromise;
-    })
-    .then(function () {
-        console.log('Clicked algorithm tile');
-        let warmupClickPromise = waitAndClick(page, 'input[value="warmup"]');
-        return warmupClickPromise;
-    })
-    .then(function () {
-        console.log('warmup checked');
+(async function() {
+    try {
+        browser = await browserStartPromise;
+        // Browser Opened
+
+        page = await browser.newPage();
+        // New tab/Page opened
+        await page.goto('https://www.hackerrank.com/auth/login');
+        // Hackerrank login Page
+
+        
+        await page.waitForSelector('#input-1', { visible: true });
+        // Selector loaded
+        await page.type('#input-1', emailPassObj.email, { delay: 100 });
+        // Username filled
+        await page.type('#input-2', emailPassObj.password, { delay: 50 });
+        // Password filled
+        await page.click('button.ui-btn.ui-btn-large.ui-btn-primary.auth-button.ui-btn-styled');
+        // Logged inside hackerrank
+
+
+        await waitAndClick(page, '.track-item.bold>div');
+        // Clicked algorithm tile
+        await waitAndClick(page, 'input[value="warmup"]');
+        // warmup checked
+        
         // $$ function will get all the elements present with that selector in an array
-        let quesArrPromise = page.$$('.challenges-list .ui-btn.ui-btn-normal.primary-cta.ui-btn-line-primary.ui-btn-styled', { delay: 50 })
-        return quesArrPromise;
-    })
-    .then(function (quesArrPromise) {
-        console.log(quesArrPromise.length);
-        let quesSolvedPromise = quesSolver(page, quesArrPromise[0], answerObj.answers[0]);
-        return quesSolvedPromise;
-    })
+        let quesArr = await page.$$('.challenges-list .ui-btn.ui-btn-normal.primary-cta.ui-btn-line-primary.ui-btn-styled', { delay: 50 });
+        await quesSolver(page, quesArr[0], answerObj.answers[0]);
+    } catch (error) {
+        console.log(error);
+    }
+})();
 
 function waitAndClick(page, selector) {
     return new Promise(function (resolve, reject) {
@@ -80,7 +60,6 @@ function waitAndClick(page, selector) {
             })
     })
 }
-
 function quesSolver(page, question, answer) {
     return new Promise(function (resolve, reject) {
         let clickOnQues = question.click();
