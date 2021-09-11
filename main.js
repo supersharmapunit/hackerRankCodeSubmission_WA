@@ -19,33 +19,8 @@ browserStartPromise
     .then(function (newTab) {
         page = newTab;
         console.log('New tab opened');
-        let googleHomepagePromise = newTab.goto('https://www.google.com/');
+        let googleHomepagePromise = newTab.goto('https://www.hackerrank.com/auth/login');
         return googleHomepagePromise
-    })
-    .then(function () {
-        console.log('Google Homepage Opened');
-        let searchElementPromise = page.type('input[title= "Search"]', 'hackerrank login');
-        return searchElementPromise;
-    })
-    .then(function () {
-        console.log('Search query typed');
-        let clickEnterPromise = page.keyboard.press('Enter');
-        return clickEnterPromise
-    })
-    // .then(function(){
-    //     console.log('On search result page');
-    //     let searchLinkClickPromise = page.waitForSelector('.LC20lb.DKV0Md',{visible:true});
-    //     return searchLinkClickPromise;
-    // })
-    // .then(function(){
-    //     console.log('Waiting for selector');
-    //     let searchLinkClickPromise = page.click('.LC20lb.DKV0Md');
-    //     return searchLinkClickPromise;
-    // })
-    .then(function () {
-        console.log('On result Page');
-        let wacPromise = waitAndClick(page, '.LC20lb.DKV0Md');
-        return wacPromise;
     })
     .then(function () {
         console.log('Hackerrank login Page');
