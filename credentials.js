@@ -1,4 +1,4 @@
 module.exports = {
-    email : 'dajora3420@drlatvia.com',
-    password : '123456789'
+    email : '', //enter your username or email(String)
+    password : '' // enter your password(String)
 }
